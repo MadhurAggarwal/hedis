@@ -121,16 +121,23 @@ multiExec rtx = do
     _        <- multi
     Queued f <- runRedisTx rtx
     r        <- exec
-    case r of
-        MultiBulk rs ->
-            return $ maybe
-                TxAborted
-                (either (TxError . show) TxSuccess . f . fromList)
-                rs
-        _ -> error $ "hedis: EXEC returned " ++ show r
+    waitRes  <- wait
+    case waitRes of
+        Integer n | n >= 1 ->
+            case r of
+                MultiBulk rs ->
+                    return $ maybe
+                        TxAborted
+                        (either (TxError . show) TxSuccess . f . fromList)
+                        rs
+                _ -> error $ "hedis: EXEC returned " ++ show r
+        _ -> error $ "hedis: WAIT returned " ++ show waitRes
 
 multi :: Redis (Either Reply Status)
 multi = sendRequest ["MULTI"]
 
 exec :: Redis Reply
 exec = either id id <$> sendRequest ["EXEC"]
+
+wait :: Redis Reply
+wait = either id id <$> sendRequest ["WAIT","1","50"]
