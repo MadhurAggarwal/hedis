@@ -1,3 +1,17 @@
+# My Work At Juspay's Hedis Fork
+
+Hi! This is a fork of Redis Client library for Haskell, where Juspay Contributes publically.
+<br>
+I worked on performance measurements, by adding the command:
+```
+WAIT n/2 50
+```
+on MultiExec, to improve consistency of critical writes, effectively testing a more CP-oriented system for critical writes and the standard AP-oriented system for normal writes.
+<br>
+Ask me for the Perf-measurements results!
+
+<hr>
+
 # Welcome to hedis
 
 [![Build Status](https://travis-ci.org/informatikr/hedis.svg?branch=master)](https://travis-ci.org/informatikr/hedis)
